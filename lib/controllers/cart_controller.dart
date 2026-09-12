@@ -24,6 +24,10 @@ class CartController extends GetxController {
     fetchCart();
   }
 
+  // ============================================================
+  // GET CART
+  // ============================================================
+
   Future<void> fetchCart() async {
     try {
       isLoading.value = true;
@@ -31,7 +35,9 @@ class CartController extends GetxController {
 
       final response = await ApiService.get('/cart');
 
-      debugPrint('CART API RESPONSE: $response');
+      debugPrint(
+        'CART API RESPONSE: $response',
+      );
 
       if (response['success'] == true) {
         _updateCartFromResponse(response);
@@ -41,7 +47,9 @@ class CartController extends GetxController {
                 'Unable to load cart.';
       }
     } catch (e) {
-      debugPrint('CART FETCH ERROR: $e');
+      debugPrint(
+        'CART FETCH ERROR: $e',
+      );
 
       errorMessage.value =
       'Unable to load cart. Please try again.';
@@ -49,6 +57,10 @@ class CartController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  // ============================================================
+  // UPDATE LOCAL CART DATA FROM API
+  // ============================================================
 
   void _updateCartFromResponse(
       Map<String, dynamic> response,
@@ -59,11 +71,13 @@ class CartController extends GetxController {
     data is Map ? (data['items'] ?? []) : [];
 
     cartItems.assignAll(
-      items.map(
+      items
+          .map(
             (item) => CartItemModel.fromJson(
           Map<String, dynamic>.from(item),
         ),
-      ),
+      )
+          .toList(),
     );
 
     final totals =
@@ -94,6 +108,10 @@ class CartController extends GetxController {
             0;
   }
 
+  // ============================================================
+  // UPDATE QUANTITY
+  // ============================================================
+
   Future<void> updateQuantity(
       CartItemModel item,
       int newQuantity,
@@ -114,6 +132,10 @@ class CartController extends GetxController {
 
     try {
       isUpdating.value = true;
+
+      debugPrint(
+        'UPDATING CART ITEM: ${item.key}',
+      );
 
       final response = await ApiService.patch(
         '/cart/items',
@@ -154,6 +176,10 @@ class CartController extends GetxController {
     }
   }
 
+  // ============================================================
+  // INCREASE QUANTITY
+  // ============================================================
+
   Future<void> increaseQuantity(
       CartItemModel item,
       ) async {
@@ -172,6 +198,10 @@ class CartController extends GetxController {
     }
   }
 
+  // ============================================================
+  // DECREASE QUANTITY
+  // ============================================================
+
   Future<void> decreaseQuantity(
       CartItemModel item,
       ) async {
@@ -183,14 +213,23 @@ class CartController extends GetxController {
     }
   }
 
+  // ============================================================
+  // REMOVE ITEM
+  // ============================================================
+
   Future<void> removeItem(
       CartItemModel item,
       ) async {
     try {
       isRemoving.value = true;
 
-      final response = await ApiService.delete(
-        '/cart/items',
+      debugPrint(
+        'REMOVING CART ITEM KEY: ${item.key}',
+      );
+
+      // Fashlab API preferred remove endpoint
+      final response = await ApiService.post(
+        '/cart/items/remove',
         body: {
           'key': item.key,
         },
@@ -234,9 +273,17 @@ class CartController extends GetxController {
     }
   }
 
+  // ============================================================
+  // REFRESH CART
+  // ============================================================
+
   Future<void> refreshCart() async {
     await fetchCart();
   }
+
+  // ============================================================
+  // CART ITEM COUNT
+  // ============================================================
 
   int get itemCount {
     return cartItems.fold(
@@ -244,6 +291,10 @@ class CartController extends GetxController {
           (sum, item) => sum + item.quantity,
     );
   }
+
+  // ============================================================
+  // EMPTY CHECK
+  // ============================================================
 
   bool get isEmpty {
     return cartItems.isEmpty;

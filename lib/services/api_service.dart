@@ -40,7 +40,7 @@ class ApiService {
         }),
       );
 
-      _updateSessionFromResponse(response);
+      await _updateSessionFromResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
@@ -110,21 +110,27 @@ class ApiService {
   static Future<void> _updateSessionFromResponse(
       http.Response response,
       ) async {
-    final rawCookie = response.headers['set-cookie'];
+    final rawCookie =
+    response.headers['set-cookie'];
 
-    if (rawCookie != null && rawCookie.isNotEmpty) {
-      final cookiePart = rawCookie.split(';').first;
+    if (rawCookie != null &&
+        rawCookie.isNotEmpty) {
+      final cookiePart =
+          rawCookie.split(';').first;
 
       _cookie = cookiePart;
 
-      final prefs = await SharedPreferences.getInstance();
+      final prefs =
+      await SharedPreferences.getInstance();
 
       await prefs.setString(
         'session_cookie',
         _cookie!,
       );
 
-      debugPrint('SESSION COOKIE SAVED: $_cookie');
+      debugPrint(
+        'SESSION COOKIE SAVED: $_cookie',
+      );
     }
   }
 
@@ -204,9 +210,10 @@ class ApiService {
 
     return jsonDecode(response.body);
   }
+
   // ============================================================
-// DELETE
-// ============================================================
+  // DELETE
+  // ============================================================
 
   static Future<Map<String, dynamic>> delete(
       String endpoint, {
@@ -226,6 +233,10 @@ class ApiService {
 
     debugPrint(
       'DELETE $endpoint → ${response.statusCode}',
+    );
+
+    debugPrint(
+      'DELETE RESPONSE: ${response.body}',
     );
 
     return jsonDecode(response.body);
@@ -290,6 +301,10 @@ class ApiService {
         .toList();
   }
 
+  // ============================================================
+  // SHOP PRODUCTS
+  // ============================================================
+
   static Future<List<ProductModel>> fetchShopProducts({
     String? query,
     String? category,
@@ -308,7 +323,8 @@ class ApiService {
       params['q'] = query.trim();
     }
 
-    if (category != null && category.trim().isNotEmpty) {
+    if (category != null &&
+        category.trim().isNotEmpty) {
       params['category'] = category.trim();
     }
 
@@ -320,7 +336,8 @@ class ApiService {
       params['sort'] = sort.trim();
     }
 
-    if (fabric != null && fabric.trim().isNotEmpty) {
+    if (fabric != null &&
+        fabric.trim().isNotEmpty) {
       params['fabric'] = fabric.trim();
     }
 

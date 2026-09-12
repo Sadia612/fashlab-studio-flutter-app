@@ -521,15 +521,12 @@ class ProductDetailsScreen extends StatelessWidget {
                     onPressed: currentProduct.inStock
                         ? () {
                       Get.toNamed(
-                        AppRoutes.order,
+                        AppRoutes.checkout,
                         arguments: {
                           'product': currentProduct,
-                          'quantity':
-                          controller.quantity.value,
-                          'size':
-                          controller.selectedSize.value,
-                          'color':
-                          controller.selectedColor.value,
+                          'quantity': controller.quantity.value,
+                          'size': controller.selectedSize.value,
+                          'color': controller.selectedColor.value,
                         },
                       );
                     }
